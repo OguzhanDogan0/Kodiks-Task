@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    environment {
+        GIT_CREDENTIALS_ID = 'github'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: GIT_CREDENTIALS_ID, branch: 'master', url: 'https://github.com/OguzhanDogan0/kube-test.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh 'npm start &'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline tamamlandı.'
+        }
+        success {
+            echo 'Pipeline başarılı.'
+        }
+        failure {
+            echo 'Pipeline başarısız oldu.'
+        }
+    }
+}
