@@ -1,57 +1,11 @@
 
-helm create nginx-service
+helm create nginx-deployment
 
-Values yaml ayarlamaları
-80 portunda çalıştırmak için service
-service:
-  type: ClusterIP
-  port: 80
-  olarak tanım yapılır.
+Deployment
+helm install nginx-deployment ./nginx-deployment -f values-test.yaml
+Values-test yaml'da, 3 pod olarak ayağa kaldıracaktır.
 
-nginx-service/templates/deployment.yaml da yapılacak düzenlemeler.
-
-containers:
-  - name: nginx
-    image: "nginx:latest"
-    ports:
-      - containerPort: 80
-
-deploy etmek için
-helm install nginx-service ./nginx-service
-
-Ortam değişkenleri ile yaml örneği
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: {{ include "nginx-service.fullname" . }}
-  labels:
-    {{- include "nginx-service.labels" . | nindent 4 }}
-spec:
-  replicas: {{ .Values.replicaCount }}
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: {{ include "nginx-service.name" . }}
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/name: {{ include "nginx-service.name" . }}
-    spec:
-      containers:
-        - name: nginx
-          image: "nginx:latest"
-          ports:
-            - containerPort: 80
-          env:
-            - name: NGINX_HOST
-              value: "example.com"  # Ortam değişkeni ekleme
-            - name: NGINX_PORT
-              value: "80"
-burada ki değerleri values.yaml dosyasından okuyacaktır.
-helm install nginx-service ./nginx-service -f deger-values.yaml
-
-Ölçeklendirme yapılması için, 
-replicaCount: 3 -> 3 pod olarak ayağa kalkacaktır. 
-Bu şekilde örneklendirme yapılabilir.
-
+Scale etme
+kubectl scale deployment nginx-deployment --replicas=5
+3 pod olan nginx'i 5 pod olarak scale ediyoruz.
 
