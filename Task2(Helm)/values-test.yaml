@@ -1,0 +1,16 @@
+replicaCount: 3 
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: stable
+
+service:
+  name: nginx
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+  nodePort: null
+
+
+resources: {}
