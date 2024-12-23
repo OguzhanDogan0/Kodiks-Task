@@ -1,0 +1,11 @@
+Cpu 
+100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[1m])) * 100)
+
+Threshold
+Input B Is above 80
+
+Memory
+sum (container_memory_working_set_bytes{id="/"})by (node) / sum (machine_memory_bytes{})by (node) * 100
+
+Threshold
+Input B Is above 80
